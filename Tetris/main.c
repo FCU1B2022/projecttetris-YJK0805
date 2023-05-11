@@ -1,4 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
+#define CANVAS_WIDTH 10
+#define CANVAS_HEIGHT 20
 
 typedef enum{
 	RED = 41,
@@ -15,6 +21,21 @@ typedef struct {
 	int size;
 	char rotates[4][4][4];
 }Shape;
+
+typedef struct {
+	int x;
+	int y;
+	int score;
+	int rotate;
+	int fallTime;
+	ShapeId queue[4];
+}State;
+
+typedef struct {
+	Color color;
+	ShapeId shape;
+	bool current;
+}Block;
 
 Shape shape[7] = {
 	{
@@ -104,7 +125,7 @@ Shape shape[7] = {
 	},
 	{
 		.shape = O,
-		.color = GREEN,
+		.color = WHITE,
 		.size = 2,
 		.rotates = {
 			{
@@ -127,7 +148,7 @@ Shape shape[7] = {
 	},
 	{
 		.shape = S,
-		.color = PURPLE,
+		.color = GREEN,
 		.size = 3,
 		.rotates = {
 			{
@@ -154,7 +175,7 @@ Shape shape[7] = {
 	},
 	{
 		.shape = T,
-		.color = RED,
+		.color = PURPLE,
 		.size = 3,
 		.rotates = {
 			{
@@ -181,7 +202,7 @@ Shape shape[7] = {
 	},
 	{
 		.shape = Z,
-		.color = WHITE,
+		.color = RED,
 		.size = 3,
 		.rotates = {
 			{
@@ -208,27 +229,35 @@ Shape shape[7] = {
 	}
 };
 
-typedef struct {
-	Color color;
-	ShapeId shape;
-}Block;
+void resetBlock(Block* block) {
+	block->color = BLACK;
+	block->shape = EMPTY;
+	block->current = false;
+}
+
 int main(){
-	Color cur;
-	for (int i = 0; i < 7; i++) {
-		for (int r = 0; r < 4; r++) {
-			for (int c = 0; c < 4; c++) {
-				for (int k = 0; k < 4; k++) {
-					if (shape[i].rotates[r][c][k] == 1) {
-						cur = shape[i].color;
-					}else {
-						cur = BLACK;
-					}
-					printf("\033[%dm  \033[0m", cur);
-				}
-				printf("\n");
-			}
-			printf("\n");
+	srand(time(NULL));
+	State state = {
+		.x = CANVAS_WIDTH / 2,
+		.y = 0,
+		.score = 0,
+		.rotate = 0,
+		.fallTime = 0
+	};
+
+	for (int i = 0; i < 4; i++) {
+		state.queue[i] = rand() % 7;
+	}
+
+	Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH];
+	for (int i = 0; i < CANVAS_HEIGHT; i++) {
+		for (int j = 0; j < CANVAS_WIDTH; j++) {
+			resetBlock(&canvas[i][j]);
 		}
 	}
+
+	system("cls");
+	printf("\e[?25l");
+
 	return 0;
 }
