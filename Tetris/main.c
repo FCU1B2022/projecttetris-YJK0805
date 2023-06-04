@@ -10,14 +10,14 @@
 #define DOWN_KEY 0x28     // The key to move down, default = 0x28 (down arrow)
 #define FALL_KEY 0x20     // The key to fall, default = 0x20 (spacebar)
 #define HOLD_KEY 0x43     // The key to hold, default = 0x43 (C)
-#define UP_KEY 0x26
-#define ENTER_KEY 0x0D
-#define ESC_KEY 0x1B
+#define UP_KEY 0x26	      // The key to up option, default = 0x26 (up arrow)
+#define ENTER_KEY 0x0D	  // The key to enter, default = 0x0D (enter)
+#define ESC_KEY 0x1B	  // The key to esc, default = 0x1B (esc)
 
 #define FALL_DELAY 200    // The delay between each fall, default = 500
 #define RENDER_DELAY 20  // The delay between each frame, default = 100
 
-#define LEFT_FUNC() GetAsyncKeyState(LEFT_KEY) & 0x8000
+#define LEFT_FUNC() GetAsyncKeyState(LEFT_KEY) & 0x8000 //
 #define RIGHT_FUNC() GetAsyncKeyState(RIGHT_KEY) & 0x8000
 #define ROTATE_FUNC() GetAsyncKeyState(ROTATE_KEY) & 0x8000
 #define UP_FUNC() GetAsyncKeyState(UP_KEY) & 0x8000
@@ -30,9 +30,9 @@
 #define CANVAS_WIDTH 10
 #define CANVAS_HEIGHT 20
 
-int CountScore[5] = {0, 10, 30, 60, 100};
-char start_menu[3][100] = { "Classic","40 lines","Quit" }, end_menu[2][100] = {"Continue","Quit"};
-
+int CountScore[5] = {0, 10, 30, 60, 100}; // The score for each line, default = {0, 10, 30, 60, 100}
+char start_menu[3][100] = { "Classic","40 lines","Quit" }, end_menu[2][100] = {"Continue","Quit"}; // The menu for start and end
+// The Color of each block
 typedef enum {
     RED = 41,
     GREEN,
@@ -43,7 +43,7 @@ typedef enum {
     WHITE,
     BLACK = 0,
 }Color;
-
+// The shape of each block
 typedef enum {
     EMPTY = -1,
     I,
@@ -54,14 +54,14 @@ typedef enum {
     T,
     Z
 }ShapeId;
-
+// The state of each block
 typedef struct {
     ShapeId shape;
     Color color;
     int size;
     char rotates[4][4][4];
 }Shape;
-
+// The state of the game
 typedef struct{
     int x;
     int y;
@@ -78,13 +78,13 @@ typedef struct{
     ShapeId queue[4];
     ShapeId hold;
 }State;
-
+// The state of each block
 typedef struct {
     Color color;
     ShapeId shape;
     bool current;
 }Block;
-
+// The state of the Block
 Shape shapes[7] = {
     {
         .shape = I,
@@ -283,19 +283,19 @@ Shape shapes[7] = {
         }
     },
 };
-
+// set the block with the given color and shape
 void setBlock(Block* block, Color color, ShapeId shape, bool current){
     block->color = color;
     block->shape = shape;
     block->current = current;
 }
-
+// reset the block to empty
 void resetBlock(Block* block){
     block->color = BLACK;
     block->shape = EMPTY;
     block->current = false;
 }
-
+// move the block to the new position
 bool move(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH], int originalX, int originalY, int originalRotate, int newX, int newY, int newRotate, ShapeId shapeId) {
     Shape shapeData = shapes[shapeId];
     int size = shapeData.size;
@@ -334,7 +334,7 @@ bool move(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH], int originalX, int original
 
     return true;
 }
-
+// print the canvas
 void printCanvas(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH], State* state){
     //printf("\033[0;0H\");
     for (int i = 0; i < CANVAS_HEIGHT; i++) {
@@ -386,7 +386,7 @@ void printCanvas(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH], State* state){
     }
     return;
 }
-
+// clear the line and return the number of lines cleared
 int clearLine(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH]) {
     for (int i = 0; i < CANVAS_HEIGHT; i++) {
         for (int j = 0; j < CANVAS_WIDTH; j++) {
@@ -417,6 +417,7 @@ int clearLine(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH]) {
     }
     return linesCleared;
 }
+// check the game's status
 int logic(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH], State* state){
     if (HOLD_FUNC() && !state->holdable) {
         state->holdable = true;
@@ -486,6 +487,7 @@ int logic(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH], State* state){
     }
     return 1;
 }
+// print the game's rules
 void printRules(int mode) {
     printf("\033[%d;%dH---------- Tetris Game Rules ----------\n",3,3);
     printf("\033[%d;%dHGame Mode: %s\n",4,3,mode == 0 ? "Classic" : "40 Lines");
@@ -521,6 +523,7 @@ void printRules(int mode) {
         printf("\033[%d;%dHpress Enter to play the game\n", 21, 3);
     }
 }
+// print the start screen
 void start_display() {
     printf("\033[%d;%dH _______ ______ _______ _____  _____  _____ \n",3,3);
     printf("\033[%d;%dH|__   __|  ____|__   __|  __ \\|_   _|/ ____|\n",4,3);
@@ -530,6 +533,7 @@ void start_display() {
     printf("\033[%d;%dH   |_|  |______|  |_|  |_|  \\_\\_____|_____/ \n",8,3);
     printf("\033[%d;%dHpress any key to start(except Enter)\n",10,7);
 }
+// print the menu screen
 void menu_display(int mode) {
     printf("\033[%d;%dH       SELECT MODE\n\n",3,5);
     for (int i = 0; i < 3; i++) {
@@ -544,6 +548,7 @@ void menu_display(int mode) {
     }
     printf("\033[%d;%dH\npress up,down,Enter to select mode.\n",8,5);
 }
+// print the end screen
 void end_display(State* state) {
     printf("\033[%d;%dH _______ ______ _______ _____  _____  _____ \n",3,3);
     printf("\033[%d;%dH|__   __|  ____|__   __|  __ \\|_   _|/ ____|\n",4,3);
@@ -574,7 +579,6 @@ void end_display(State* state) {
         printf("%s\n", end_menu[i]);
     }
     printf("\033[%d;%dHpress up,down,Enter to select continue or quit\n",17,0);
-
 }
 int main(){
     srand(time(NULL));
