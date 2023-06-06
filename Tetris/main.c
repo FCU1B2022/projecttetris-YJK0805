@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
@@ -367,10 +367,10 @@ void printCanvas(Block canvas[CANVAS_HEIGHT][CANVAS_WIDTH], State* state){
     }
     printf("\033[%d;%dHHold: \n", 3, 0);
     shapeData = shapes[state->hold];
-    double time = (clock() - state->start_time) / CLOCKS_PER_SEC;
-    int minutes = time / 60, seconds = (int)time % 60, microseconds = (time - (int)time) * 1000 / 10;
-    printf("\033[%d;%dHtime: \n  %d:%d:%d\n", 8, 0,minutes,seconds,microseconds);
     if (state->mode == 1) {
+        double time = (clock() - state->start_time) / CLOCKS_PER_SEC;
+        int minutes = time / 60, seconds = (int)time % 60, microseconds = (time - (int)time) * 1000 / 10;
+        printf("\033[%d;%dHtime: \n  %d:%d:%d\n", 8, 0, minutes, seconds, microseconds);
         printf("\033[%d;%dHLines:\n  %d", 12,0,state->line);
     }
     for (int j = 0; j < 4; j++) {
@@ -668,6 +668,6 @@ int main(){
         }
     }
     system("cls");
-    printf("\n\n\tThanks for playing.\n\t      bye bye�I\n\n");
+    printf("\n\n\tThanks for playing.\n\t      bye bye！\n\n");
     return 0;
 }
